@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import resetArray from '../utils/resetArray';
 import bubbleSort from '../utils/sorting/bubbleSort';
-import swap from '../utils/swap';
+// import swap from '../utils/swap';
 
 import Bar from '../components/Bar';
 import Button from '../components/Button';
@@ -39,36 +39,49 @@ const MainContainer = styled.div`
 class SortingVisualizer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { array: [] };
+    this.state = { array: [], compared: [] };
   }
 
   componentDidMount() {
-    this.setState({ array: resetArray(10, 850, 100) });
+    this.setState({ array: resetArray(10, 850, 150) });
     // this.sortArray();
   }
 
   generateArray = () => {
-    this.setState({ array: resetArray(10, 800, 100) });
+    this.setState({ array: resetArray(10, 800, 150) });
   };
 
   sortArray = () => {
     const arr = [...this.state.array];
-    const swaps = bubbleSort(arr);
+    const { comparisons, swaps } = bubbleSort(arr);
     let newArr = [...this.state.array];
+    let comparedElements = [];
     let i = 0;
 
     const interval = setInterval(() => {
-      // swap the 2 array values
+      if (i > 0) {
+        comparedElements[comparisons[i - 1].idxa] = false;
+        comparedElements[comparisons[i - 1].idxb] = false;
+      }
+      comparedElements[comparisons[i].idxa] = true;
+      comparedElements[comparisons[i].idxb] = true;
+
       let temp = newArr[swaps[i].idxa];
       newArr[swaps[i].idxa] = newArr[swaps[i].idxb];
       newArr[swaps[i].idxb] = temp;
       i++;
 
-      this.setState({ array: newArr });
+      this.setState({ array: newArr, compared: comparedElements });
 
-      if (i === swaps.length) clearInterval(interval);
+      if (i === swaps.length) {
+        comparedElements[comparisons[i - 1].idxa] = false;
+        comparedElements[comparisons[i - 1].idxb] = false;
+
+        this.setState({ compared: comparedElements });
+
+        clearInterval(interval);
+      }
     }, 4);
-    console.log(swaps);
   };
 
   render() {
@@ -91,7 +104,7 @@ class SortingVisualizer extends React.Component {
         </FLexContainer>
         <MainContainer>
           {this.state.array.map((el, idx) => (
-            <Bar height={el} isCompared={false} key={idx} />
+            <Bar height={el} isCompared={this.state.compared[idx]} key={idx} />
           ))}
         </MainContainer>
       </>
