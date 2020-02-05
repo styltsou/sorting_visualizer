@@ -36,6 +36,11 @@ const MainContainer = styled.div`
   bottom: 0px;
 `;
 
+// VISUALIZATION OPTIONS
+const ARRAY_SIZE = 80;
+const UPDATE_SPEED = 5;
+const RESET_TIMEOUT = 1500;
+
 class SortingVisualizer extends React.Component {
   constructor(props) {
     super(props);
@@ -43,12 +48,12 @@ class SortingVisualizer extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ array: resetArray(10, 850, 150) });
+    this.setState({ array: resetArray(ARRAY_SIZE) });
     // this.sortArray();
   }
 
   generateArray = () => {
-    this.setState({ array: resetArray(10, 800, 150) });
+    this.setState({ array: resetArray(ARRAY_SIZE) });
   };
 
   sortArray = () => {
@@ -58,7 +63,7 @@ class SortingVisualizer extends React.Component {
     let comparedElements = [];
     let i = 0;
 
-    const interval = setInterval(() => {
+    const intervalID = setInterval(() => {
       if (i > 0) {
         comparedElements[comparisons[i - 1].idxa] = false;
         comparedElements[comparisons[i - 1].idxb] = false;
@@ -79,9 +84,15 @@ class SortingVisualizer extends React.Component {
 
         this.setState({ compared: comparedElements });
 
-        clearInterval(interval);
+        clearInterval(intervalID);
+
+        if (RESET_TIMEOUT !== 'none') {
+          setTimeout(() => {
+            this.setState({ array: resetArray(ARRAY_SIZE) });
+          }, RESET_TIMEOUT);
+        }
       }
-    }, 4);
+    }, UPDATE_SPEED);
   };
 
   render() {

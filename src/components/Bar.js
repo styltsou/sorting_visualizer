@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Div = styled.div`
-  width: .5rem;
+  width: .6rem;
   height: ${props => `${props.height / 10}rem`};
   margin: auto 1px 0 1px;
   background-color: ${props =>
